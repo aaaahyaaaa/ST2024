@@ -15,4 +15,4 @@ class HomePageTest(TestCase):
         html = response.content.decode('utf8') #(3)
         self.assertTrue(html.startswith('<html>')) #(4)
         self.assertIn('<title>To-Do lists</title>', html) #(5)
-        self.assertTrue(html.endswith('</html>')) #(6)
+        self.as sertTrue(html.endswith('</html>')) #(6)
