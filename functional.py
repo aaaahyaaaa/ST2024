@@ -44,12 +44,20 @@ class NewVisitorTest(unittest.TestCase):
         
         # 页面中又显示了一个文本框，可以输入其她待办事项
         # 她输入了"Send a gift to Chenzhuhao"
-        self.fail('Finish the test!')
+        inputbox = self.browser.find_element(By.ID, 'id_new_item')
+        inputbox.send_keys('Send a gift to Chenzhuhao')
+        inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
+
         # 页面再次更新，她的清单中显示了这两个待办事项
+        table = self.browser.find_element(By.ID,'id_list_table')
+        rows = table.find_elements(By.TAG_NAME, 'tr')
+        self.assertIn('1: Buy flowsers', [row.text for row in rows])
+        self.assertIn('2:Send a gift to Chenzhuhao', [row.text for row in rows])
 
         # 韩烨想知道这个网站是否会记住她的清单
         # 她看到网站为她生成了一个唯一的URL
-
+        self.fail('Finish the test!')
         # 她访问这个URL，发现她的待办事项列表还在
         # 她很满意地离开了
 if __name__== '__main__':
