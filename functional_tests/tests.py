@@ -5,8 +5,11 @@ import unittest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from django.test import LiveServerTestCase
 
-class NewVisitorTest(unittest.TestCase):
+
+
+class NewVisitorTest(LiveServerTestCase):
     def setUp(self):
         self.browser = webdriver.Firefox()
 
@@ -22,7 +25,7 @@ class NewVisitorTest(unittest.TestCase):
 
         #张三听说有一个在线待办事项的应用
         #他去看了这个应用的首页
-        self.browser.get('http://localhost:8000')
+        self.browser.get(self.live_server_url)
 
         #他注意到网页里包含“To-Do"这个词
         self.assertIn('To-Do',self.browser.title)
@@ -42,7 +45,7 @@ class NewVisitorTest(unittest.TestCase):
         # 待办事项表格中显示了"1: Buy flowers"
         inputbox.send_keys(Keys.ENTER)
         time.sleep(1)
-        self.check_for_row_in_list_table('1: Buy flowsers')
+        self.check_for_row_in_list_table('1: Buy flowers')
         
         
         # 页面中又显示了一个文本框，可以输入其她待办事项
@@ -53,7 +56,7 @@ class NewVisitorTest(unittest.TestCase):
         time.sleep(1)
 
         # 页面再次更新，她的清单中显示了这两个待办事项
-        self.check_for_row_in_list_table('1: Buy flowsers')
+        self.check_for_row_in_list_table('1: Buy flowers')
         self.check_for_row_in_list_table('2: Send a gift to Chenzhuhao')
 
         # 韩烨想知道这个网站是否会记住她的清单
@@ -61,5 +64,3 @@ class NewVisitorTest(unittest.TestCase):
         self.fail('Finish the test!')
         # 她访问这个URL，发现她的待办事项列表还在
         # 她很满意地离开了
-if __name__== '__main__':
-    unittest.main()
