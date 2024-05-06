@@ -53,7 +53,7 @@ class NewVisitorTest(LiveServerTestCase):
         #他在文本输入框中输入了“buy flowers"
         inputbox.send_keys('Buy flowers')
 
-        # 她按了回车键后，页面更新了
+        # 他按了回车键后，页面更新了
         # 待办事项表格中显示了"1: Buy flowers"
         inputbox.send_keys(Keys.ENTER)
         time.sleep(1)
@@ -61,14 +61,62 @@ class NewVisitorTest(LiveServerTestCase):
         
         
         # 页面中又显示了一个文本框，可以输入其她待办事项
-        # 她输入了"Send a gift to Chenzhuhao"
+        # 他输入了"Send a gift to Chenzhuhao"
         inputbox = self.browser.find_element(By.ID, 'id_new_item')
         inputbox.send_keys('Send a gift to Chenzhuhao')
         inputbox.send_keys(Keys.ENTER)
 
-        # 页面再次更新，她的清单中显示了这两个待办事项
+        # 页面再次更新，他的清单中显示了这两个待办事项
         self.wait_for_row_in_list_table('1: Buy flowers')
         self.wait_for_row_in_list_table('2: Send a gift to Chenzhuhao')
+
+
+    def test_multiple_users_can_start_lists_at_different_urls(self):
+        #张三新建一个待办事项清单
+        self.browser.get(self.live_server_url)
+        inputbox = self.browser.find_element(By.ID, 'id_new_item')
+        inputbox.send_keys('Buy flowers')
+        inputbox.send_keys(Keys.ENTER)
+        self.wait_for_row_in_list_table('1: Buy flowers')
+
+        #他注意到清单有一个唯一的URL
+        zhangsan_list_url = self.browser.current_url
+        self.assertRegex(zhangsan_list_url, '/lists/.+')
+
+        #现在有一个新用户王五访问网站
+        #我们使用一个新的浏览器会话
+        #确保张三的信息不会从cookie中泄露出去
+        self.browser.quit()
+        self.browser = webdriver.Firefox()
+
+        #王五访问首页
+        #页面中看不到张三的清单
+        self.browser.get(self.live_server_url)
+        page_text = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertNotIn('Buy flowers', page_text)
+        self.assertNotIn('Send a gift to Chenzhuhao', page_text)
+         
+        #王五输入一个新待办事项，新建一个清单
+        inputbox = self.browser.find_element(By.ID, 'id_new_item')
+        inputbox.send_keys('buy milk')
+        inputbox.send_keys(Keys.ENTER)
+        self.wait_for_row_in_list_table('1: Buy milk')
+
+        #王五获得了他的唯一URL
+        wangwu_list_url = self.browser.current_url
+        self.assertRegex(wangwu_list_url, '/lists/.+')
+        self.assertNotEqual(wangwu_list_url, zhangsan_list_url)
+ 
+        #这个页面还是没有张三的清单
+        page_text = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertNotIn('Buy flowsers', page_text)
+        self.assertIn('Buy milk', page_text)
+
+        #两个人都很满意，然后去睡觉了
+
+
+
+
 
         # 韩烨想知道这个网站是否会记住她的清单
         # 她看到网站为她生成了一个唯一的URL
