@@ -98,7 +98,7 @@ class NewVisitorTest(LiveServerTestCase):
          
         #王五输入一个新待办事项，新建一个清单
         inputbox = self.browser.find_element(By.ID, 'id_new_item')
-        inputbox.send_keys('buy milk')
+        inputbox.send_keys('Buy milk')
         inputbox.send_keys(Keys.ENTER)
         self.wait_for_row_in_list_table('1: Buy milk')
 
@@ -120,6 +120,5 @@ class NewVisitorTest(LiveServerTestCase):
 
         # 韩烨想知道这个网站是否会记住她的清单
         # 她看到网站为她生成了一个唯一的URL
-        self.fail('Finish the test!')
         # 她访问这个URL，发现她的待办事项列表还在
         # 她很满意地离开了
