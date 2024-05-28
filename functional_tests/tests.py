@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
+import os
 import unittest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -14,6 +15,9 @@ MAX_WAIT = 10
 class NewVisitorTest(StaticLiveServerTestCase):
     def setUp(self):
         self.browser = webdriver.Firefox()
+        real_server = os.environ.get('REAL_SERVER')
+        if real_server:
+            self.live_server_url = 'http://' + real_server
 
     def tearDown(self):
         self.browser.quit()
